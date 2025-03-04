@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #e7e9ea;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.users_container {
+    width: 50%;
+    max-width: 600px;
+    background-color: #16181c;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 15px;
+    margin-top: 20px;
+    border-left: 1px solid #2f3336;
+    border-right: 1px solid #2f3336;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border-bottom: 1px solid #2f3336;
+    color: #e7e9ea;
+}
+
+.username:hover {
+    cursor: pointer;
+    background-color: rgba(231, 233, 234, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.posts {
+    display: none;
+}
+
+.post {
+    background-color: transparent;
+    border-radius: 0;
+    padding: 15px;
+    margin: 10px 0;
+    border-bottom: 1px solid #2f3336;
+}
+
+.post h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #1d9bf0;
+}
+
+/* Botones */
+button {
+    background-color: #1d9bf0;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+button:hover {
+    background-color: #1a8cd8;
+}
+
+.hideComments {
+    display: none;
+}
+
+.comments {
+    display: none;
+    margin-top: 10px;
+    padding-left: 10px;
+    border-left: 3px solid #1d9bf0;
+}
+
+.comment {
+    background-color: #16181c;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #2f3336;
+}
+
+.comment h5 {
+    margin: 0;
+    font-size: 14px;
+    color: #71767b;
+}
+
+.comment p {
+    margin: 3px 0 0;
+    font-size: 14px;
+    color: #e7e9ea;
+}
