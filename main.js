@@ -24,6 +24,7 @@ if(e.target.classList.contains("showComments")){
     const postId = post.dataset.id
     const divComments = post.querySelector(".comments");
     post.querySelector(".hideComments").style.display = "inline-block";
+    post.querySelector(".showComments").style.display = "none";
     if(posts.includes(postId)){
         divComments.style.display = "block";
     }
@@ -50,6 +51,8 @@ if(e.target.classList.contains("hideComments")){
     const comments = post.querySelector(".comments");
     comments.style.display = "none";
     post.querySelector(".hideComments").style.display = "none";
+    post.querySelector(".showComments").style.display = "block";
+
 }
 
 
