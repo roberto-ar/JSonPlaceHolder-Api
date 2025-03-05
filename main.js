@@ -61,7 +61,8 @@ if(e.target.classList.contains("username")){
     const id = e.target.id;
     
     if(user == id){ //user mostrado es el mismo al solicitado
-        document.getElementById(`posts_user_${id}`).style.display = "none";
+        const divPostsUser = document.getElementById(`posts_user_${id}`);
+        divPostsUser.style.display = divPostsUser.style.display === "none" ? "block" : "none";
     }
 
     else if(users.includes(id)){ //user ya fue conslutado
