@@ -41,7 +41,7 @@ if(e.target.classList.contains("showComments")){
         }).join("");
         divComments.innerHTML = html;
         divComments.style.display = "block";
-        posts += `${postId} `;
+        posts.push(postId);
     }
 
 }
@@ -88,7 +88,7 @@ if(e.target.classList.contains("username")){
         }).join("");
         showDiv.innerHTML = html;
         showDiv.style.display = "block"
-        users += id;
+        users.push(id);
         if(user){
             document.getElementById(`posts_user_${user}`).style.display = "none";
         }
