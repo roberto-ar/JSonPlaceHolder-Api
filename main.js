@@ -1,56 +1,28 @@
-let user = undefined; //usuario mostrado actualmente
-let users = []; //usuarios ya consultados
-let posts = []; //comentarios de posts ya consultados
+let userDisplayed = 1;
 let selectUsers = document.querySelector(".selectUsers");
+let posts = [];
 
 fetch("https://jsonplaceholder.typicode.com/users")
     .then(res => res.json())
     .then(users => {
-        const html = users.map( user => {
-            return `
-            <option value="${user.id}">${user.username}</option>
-            `
-        }).join("");
-        selectUsers.innerHTML = html;
+        let userlist = users.map(user => {
+            return `<option value="${user.id}">${user.username}</option>`
+        });
+        selectUsers.innerHTML = userlist;
+        users.forEach(async user => {
+            const usersList = document.querySelector(".users_container");
+            usersList.innerHTML += `<div id="posts_user_${user.id}"></div>`;
+            const postList = await PostsUsuario(user.id);
+            postDiv = document.getElementById(`posts_user_${user.id}`)
+            if(user.id != 1) postDiv.style.display = "none"
+            postDiv.innerHTML = postList;
+        });
     })
-
-selectUsers.addEventListener("change", async (e)=>{
-    const id = e.target.value;
-    if(user == id){ //user mostrado es el mismo al solicitado
-        const divPostsUser = document.getElementById(`posts_user_${id}`);
-        divPostsUser.style.display = divPostsUser.style.display === "none" ? "block" : "none";
-    }
-
-    else if(users.includes(id)){ //user ya fue conslutado
+selectUsers.addEventListener("change", (e)=>{
+        const id = e.target.value;
+        document.getElementById(`posts_user_${userDisplayed}`).style.display = "none";
         document.getElementById(`posts_user_${id}`).style.display = "block";
-        document.getElementById(`posts_user_${user}`).style.display = "none";
-        user = id;
-    }
-
-    else{
-        document.querySelector(".users_container").innerHTML += `<div id="posts_user_${id}"> </div>`;
-        const showDiv = document.getElementById(`posts_user_${id}`);
-        const posts = await PostsUsuario(id);
-        let html = posts.map(post =>{
-            return `
-                    <article data-id="${post.id}" class="post">
-                        <h4>${post.title}</h4>
-                        <p>${post.body}</p>
-                        <button class="showComments">Show comments</button>
-                        <button class="hideComments">Hide comments</button>
-                        <div class="comments">
-                        </div>
-                        </article>
-            `
-        }).join("");
-        showDiv.innerHTML = html;
-        showDiv.style.display = "block"
-        users.push(id);
-        if(user){
-            document.getElementById(`posts_user_${user}`).style.display = "none";
-        }
-        user = id
-    }
+        userDisplayed = id;
 })
 
 document.addEventListener("click", async (e) =>{
@@ -89,9 +61,48 @@ if(e.target.classList.contains("hideComments")){
     post.querySelector(".showComments").style.display = "block";
 
 }
+if(e.target.classList.contains("deletePost")){
+    const post = e.target.closest("article");
+    const idPost = post.dataset.id;
+    post.remove();
+    fetch(`https://jsonplaceholder.typicode.com/posts/${idPost}`, {
+        method : "DELETE"
+    })
+    .then(res =>{
+        if(res.ok){
+            //alert("post eliminado");
+        }
+        else{
+            //alert("no se pudo eliminar el post");
+        }
+    })
+    
+}
 });
 
-
+document.getElementById("publish").addEventListener("submit", (e)=>{
+    const title = document.getElementById("titlePost").value;
+    const body = document.getElementById("bodyPost").value;
+    e.preventDefault();
+    fetch("https://jsonplaceholder.typicode.com/posts",{
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId : userDisplayed,
+            title,
+            body
+        })
+    })
+    .then(res => res.json())
+    .then(post => {
+        console.log(post)
+    })
+    .catch(error =>{
+        console.log(`error enviando el post ------> ${error}`)
+    })
+})
 async function PostsUsuario(id){
     let postByUser = {};
     await fetch("https://jsonplaceholder.typicode.com/posts/")
@@ -99,7 +110,20 @@ async function PostsUsuario(id){
         .then(posts =>{
              postByUser = posts.filter(post => post.userId == id);
         });
-        return postByUser;
+        const html = postByUser.map(post =>{
+            return `
+                        <article data-id="${post.id}" class="post">
+                            <button class="deletePost">Delete post<button>
+                            <h4>${post.title}</h4>
+                            <p>${post.body}</p>
+                            <button class="showComments">Show comments</button>
+                            <button class="hideComments">Hide comments</button>
+                            <div class="comments"></div>
+                            </article>
+            `
+        }).join("");
+        return html;
+        
 }
 
 async function Comentarios(post) {
