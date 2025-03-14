@@ -1,22 +1,57 @@
 let user = undefined; //usuario mostrado actualmente
 let users = []; //usuarios ya consultados
 let posts = []; //comentarios de posts ya consultados
+let selectUsers = document.querySelector(".selectUsers");
 
 fetch("https://jsonplaceholder.typicode.com/users")
     .then(res => res.json())
     .then(users => {
         const html = users.map( user => {
             return `
-            <div id="user_container_${user.id}">
-                <h3 class="username" id="${user.id}">${user.username}</h3>
-                <div class="posts" id="posts_user_${user.id}"></div>
-            </div>
+            <option value="${user.id}">${user.username}</option>
             `
         }).join("");
-        document.querySelector(".users_container").innerHTML = html;
+        selectUsers.innerHTML = html;
     })
 
+selectUsers.addEventListener("change", async (e)=>{
+    const id = e.target.value;
+    if(user == id){ //user mostrado es el mismo al solicitado
+        const divPostsUser = document.getElementById(`posts_user_${id}`);
+        divPostsUser.style.display = divPostsUser.style.display === "none" ? "block" : "none";
+    }
 
+    else if(users.includes(id)){ //user ya fue conslutado
+        document.getElementById(`posts_user_${id}`).style.display = "block";
+        document.getElementById(`posts_user_${user}`).style.display = "none";
+        user = id;
+    }
+
+    else{
+        document.querySelector(".users_container").innerHTML += `<div id="posts_user_${id}"> </div>`;
+        const showDiv = document.getElementById(`posts_user_${id}`);
+        const posts = await PostsUsuario(id);
+        let html = posts.map(post =>{
+            return `
+                    <article data-id="${post.id}" class="post">
+                        <h4>${post.title}</h4>
+                        <p>${post.body}</p>
+                        <button class="showComments">Show comments</button>
+                        <button class="hideComments">Hide comments</button>
+                        <div class="comments">
+                        </div>
+                        </article>
+            `
+        }).join("");
+        showDiv.innerHTML = html;
+        showDiv.style.display = "block"
+        users.push(id);
+        if(user){
+            document.getElementById(`posts_user_${user}`).style.display = "none";
+        }
+        user = id
+    }
+})
 
 document.addEventListener("click", async (e) =>{
 if(e.target.classList.contains("showComments")){
@@ -54,48 +89,8 @@ if(e.target.classList.contains("hideComments")){
     post.querySelector(".showComments").style.display = "block";
 
 }
-
-
-
-if(e.target.classList.contains("username")){
-    const id = e.target.id;
-    
-    if(user == id){ //user mostrado es el mismo al solicitado
-        const divPostsUser = document.getElementById(`posts_user_${id}`);
-        divPostsUser.style.display = divPostsUser.style.display === "none" ? "block" : "none";
-    }
-
-    else if(users.includes(id)){ //user ya fue conslutado
-        document.getElementById(`posts_user_${id}`).style.display = "block";
-        document.getElementById(`posts_user_${user}`).style.display = "none";
-        user = id;
-    }
-
-    else{
-        const showDiv = document.getElementById(`posts_user_${id}`);
-        const posts = await PostsUsuario(id);
-        let html = posts.map(post =>{
-            return `
-                    <article data-id="${post.id}" class="post">
-                        <h4>${post.title}</h4>
-                        <p>${post.body}</p>
-                        <button class="showComments">Show comments</button>
-                        <button class="hideComments">Hide comments</button>
-                        <div class="comments">
-                        </div>
-                        </article>
-            `
-        }).join("");
-        showDiv.innerHTML = html;
-        showDiv.style.display = "block"
-        users.push(id);
-        if(user){
-            document.getElementById(`posts_user_${user}`).style.display = "none";
-        }
-        user = id
-    }
-}
 });
+
 
 async function PostsUsuario(id){
     let postByUser = {};
